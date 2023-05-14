@@ -56,16 +56,17 @@ class Main(tk.Frame):
 
         self.backupdb_img = tk.PhotoImage(file='backupdb.gif')
         btn_backupdb = tk.Button(toolbar, text='Backup', bg='#d7d8e0', bd=0, image=self.backupdb_img,
-                                compound=tk.TOP, command=self.view_records)
+                                compound=tk.TOP, command=self.backupdb)
         btn_backupdb.pack(side=tk.LEFT)
 
         self.restoredb_img = tk.PhotoImage(file='restoredb.gif')
         btn_restoredb = tk.Button(toolbar, text='Restore', bg='#d7d8e0', bd=0, image=self.restoredb_img,
-                                compound=tk.TOP, command=self.view_records)
+                                compound=tk.TOP, command=self.restoredb)
         btn_restoredb.pack(side=tk.LEFT)
 
         self.avatardefault_img = tk.PhotoImage(file='avatardefault.png')
-        btn_avatardefault = tk.Label(toolbar, bg='#d7d8e0', bd=0, image=self.avatardefault_img, compound=tk.TOP)
+        btn_avatardefault = tk.Button(toolbar, text="", bg='#d7d8e0', bd=0, 
+                                     image=self.avatardefault_img, compound=tk.TOP, command=self.add_avatar)
         btn_avatardefault.pack(side=tk.RIGHT, padx=8)
 
         self.tree = ttk.Treeview(self, columns=('ID', 'my_data', 'gos_nomer', 'brend_auto', 'brend_battary', 
@@ -123,10 +124,31 @@ class Main(tk.Frame):
         self.view_records()
 
     def search_records(self, gos_nomer):
+        """Поиск по полям таблицы, критерий - гос. номер\n
+           Search by table fields, criterion - state number
+        """
         gos_nomer = ('%' + gos_nomer + '%',)
         self.db.c.execute('''SELECT * FROM battary WHERE gos_nomer LIKE ?''', gos_nomer)
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]
+
+    def backupdb(self):
+        """Создание резервной копии БД.\n
+           Creating a backup copy of the database.
+        """
+        print("BACKUP")
+
+    def restoredb(self):
+        """Восстановление БД из резервной копии.\n
+           Restoring a database from a backup.
+        """
+        print("RESTORE")
+
+    def add_avatar(self):
+        """Вывести фотографию работника, который авторизовался.\n
+           Display a photo of the employee who logged in.
+        """
+        print("FOTO")
 
     def open_dialog(self):
         Child()
