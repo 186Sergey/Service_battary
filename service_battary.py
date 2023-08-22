@@ -3,6 +3,7 @@ from tkinter import messagebox as mb
 from tkinter import PhotoImage, ttk
 from datetime import datetime
 import sqlite3
+# import io
 
 
 my_data = datetime.now().strftime("%d-%m-%Y")
@@ -22,6 +23,8 @@ class Main(tk.Frame):
     def __init__(self, root):
         super().__init__(root)
         self.init_main()
+        # self.style = ttk.Style()
+        # self.style.configure("BldLbl.TLable", font=("Helvetica", 12))
         self.db = db
         self.view_records()
 
@@ -91,8 +94,8 @@ class Main(tk.Frame):
         self.tree.heading('brend_battary', text='Марка АКБ')
         self.tree.heading('kol_battary', text='Кол-во АКБ')
         self.tree.heading('description', text='Вид работ')
-        self.tree.heading('density_do', text='Плотность до:')
-        self.tree.heading('density_posle', text='Плотность после:')
+        self.tree.heading('density_do', text='Ρ до:')
+        self.tree.heading('density_posle', text='Ρ после:')
 
         self.tree.pack(side=tk.LEFT)
 
@@ -136,7 +139,13 @@ class Main(tk.Frame):
         """Создание резервной копии БД.\n
            Creating a backup copy of the database.
         """
-        print("BACKUP")
+        self.conn = sqlite3.connect("battary.db")
+        with open("backup_battary.sql", "w") as backup:
+            for line in self.conn.iterdump(): 
+                backup.write('%s\n' % line)
+
+        mb.showinfo("Создание резервной копии БД", "Резервная копия БД создана!")
+
 
     def restoredb(self):
         """Восстановление БД из резервной копии.\n
@@ -194,7 +203,7 @@ class Child(tk.Toplevel):
 
         self.entry_gos_nomer = ttk.Entry(self, width=23)
         self.entry_gos_nomer.place(x=200, y=50)
-
+        
         self.brend_auto_entry = ttk.Entry(self, width=23)
         self.brend_auto_entry.place(x=200, y=80)
 
@@ -205,7 +214,7 @@ class Child(tk.Toplevel):
         self.kol_battary_spinbox = ttk.Spinbox(self, from_=1, to=10, state="readonly")
         self.kol_battary_spinbox.place(x=200, y=140)
 
-        self.description = tk.Entry(self, width=70, font=('Times New Roman', 9))
+        self.description = ttk.Entry(self, width=70, font=('Times New Roman', 9))
         self.description.place(x=200, y=170)
 
         self.density_do_combobox = ttk.Combobox(self, values=density_up_to, state="readonly")
@@ -218,7 +227,7 @@ class Child(tk.Toplevel):
 
 
         btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
-        btn_cancel.place(x=300, y=280)
+        btn_cancel.place(x=350, y=280)
 
         self.btn_ok = ttk.Button(self, text='Добавить')
         self.btn_ok.place(x=200, y=280)
